@@ -27,6 +27,10 @@ public class EventSource {
         esDelegate = EventSourceDelegate(config: config)
     }
 
+    public init(delegate: EventSourceDelegate) {
+        esDelegate = delegate
+    }
+
     /**
      Start the `EventSource` client.
 
@@ -63,12 +67,12 @@ public class EventSource {
         public var headerTransform: HeaderTransform = { $0 }
         /// An initial value for the last-event-id header to be sent on the initial request
         public var lastEventId: String = ""
-        
+
 #if canImport(os)
         /// Configure the logger that will be used.
         public var logger: OSLog = OSLog(subsystem: "com.launchdarkly.swift-eventsource", category: "LDEventSource")
 #endif
-        
+
         /// The minimum amount of time to wait before reconnecting after a failure
         public var reconnectTime: TimeInterval = 1.0
         /// The maximum amount of time to wait before reconnecting after a failure
@@ -162,11 +166,11 @@ class ReconnectionTimer {
 }
 
 // MARK: EventSourceDelegate
-class EventSourceDelegate: NSObject, URLSessionDataDelegate {
+public class EventSourceDelegate: NSObject, URLSessionDataDelegate {
     private let delegateQueue: DispatchQueue = DispatchQueue(label: "ESDelegateQueue")
-    
-    public var logger: InternalLogging
-    
+
+    var logger: InternalLogging
+
     private let config: EventSource.Config
 
     private var readyState: ReadyState = .raw {
@@ -183,14 +187,14 @@ class EventSourceDelegate: NSObject, URLSessionDataDelegate {
 
     init(config: EventSource.Config) {
         self.config = config
-        
+
 #if canImport(os)
         self.logger = OSLogAdapter(osLog: config.logger)
 #else
         self.logger = NoOpLogging()
 #endif
-        
-        
+
+
         self.eventParser = EventParser(handler: config.handler,
                                        initialEventId: config.lastEventId,
                                        initialRetry: config.reconnectTime)
