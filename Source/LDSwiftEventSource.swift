@@ -185,7 +185,7 @@ open class EventSourceDelegate: NSObject, URLSessionDataDelegate {
     private var urlSession: URLSession?
     private var sessionTask: URLSessionDataTask?
 
-    init(config: EventSource.Config) {
+    public init(config: EventSource.Config) {
         self.config = config
 
 #if canImport(os)
