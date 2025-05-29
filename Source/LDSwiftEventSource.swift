@@ -166,7 +166,7 @@ class ReconnectionTimer {
 }
 
 // MARK: EventSourceDelegate
-public class EventSourceDelegate: NSObject, URLSessionDataDelegate {
+open class EventSourceDelegate: NSObject, URLSessionDataDelegate {
     private let delegateQueue: DispatchQueue = DispatchQueue(label: "ESDelegateQueue")
 
     var logger: InternalLogging
